@@ -1,5 +1,6 @@
 # ignore the following
 *.gz
+*.cnt
 *.txt
 /.idea/
 /data/data_compute/
