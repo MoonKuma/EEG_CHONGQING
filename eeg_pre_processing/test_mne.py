@@ -16,19 +16,19 @@ from sklearn.preprocessing import normalize
 
 
 
-raw_file1 = 'data_sample/eeg_raw_data/example/sub2/tb1.cnt'
-raw_file2 = 'data_sample/eeg_raw_data/example/sub2/tb2.cnt'
+raw_file1 = 'data/sample_data/Pain_sub5.cnt'
+raw_file2 = 'data/sample_data/Rest_sub5.cnt'
 
 # I/O - read Neuroscan raw data (.cnt)
 raw1 = mne.io.read_raw_cnt(input_fname=raw_file1, montage=None, preload=True, data_format='int32', eog='header')
-raw2 = mne.io.read_raw_cnt(input_fname=raw_file2, montage=None, preload=True, data_format='int32', eog='header')
-raw_data_list = [raw1, raw2]
+raw = mne.io.read_raw_cnt(input_fname=raw_file2, montage=None, preload=True, data_format='int32', eog='header')
+# raw_data_list = [raw1, raw2]
 
 # concatenate raw data
-raw = mne.concatenate_raws(raw_data_list, preload=None, events_list=None, verbose=None)
+# raw = mne.concatenate_raws(raw_data_list, preload=None, events_list=None, verbose=None)
 
-# down-sampling to 100Hz
-raw.resample(100, npad="auto")
+# down-sampling to 250Hz # this is suitable for eeg
+raw.resample(250, npad="auto")
 
 # band filters (1Hz - 40Hz, band filter)
 '''
@@ -37,7 +37,7 @@ ValueError: lowpass frequency 50.0 must be less than Nyquist (50.0)
 See detail of Nyquist rate : https://en.wikipedia.org/wiki/Nyquist_rate
 The basic idea is that to capture a 50Hz signal, at least 100 Hz sampling rate is required.
 '''
-raw.filter(1, 40., fir_design='firwin')
+raw.filter(1, 50., fir_design='firwin')
 
 # using ICA to remove those component considered as triggered by the eog (eye movement and so on)
 '''
@@ -51,14 +51,14 @@ ica.fit(raw, picks=picks_eeg, reject=reject)
 # # class ica offers many way of plotting
 # ica.plot_components()
 # ica.plot_properties(raw, picks=0)
-eog_average = create_eog_epochs(raw, reject=reject, picks=picks_eeg).average()
+# eog_average = create_eog_epochs(raw, reject=reject, picks=picks_eeg).average()
 eog_epochs = create_eog_epochs(raw, reject=reject)  # get single EOG trials
 eog_inds, scores = ica.find_bads_eog(eog_epochs)  # find via correlation
 ica.exclude.extend(eog_inds)
-ica.plot_scores(scores, exclude=eog_inds)  # look at r scores of components
-ica.plot_sources(eog_average, exclude=eog_inds)  # look at source time course
-ica.plot_properties(eog_epochs, picks=eog_inds, psd_args={'fmax': 35.},
-                    image_args={'sigma': 1.})  # the component we detected through ICA
+# ica.plot_scores(scores, exclude=eog_inds)  # look at r scores of components
+# ica.plot_sources(eog_average, exclude=eog_inds)  # look at source time course
+# ica.plot_properties(eog_epochs, picks=eog_inds, psd_args={'fmax': 35.},
+#                     image_args={'sigma': 1.})  # the component we detected through ICA
 raw_copy = raw.copy()
 ica.apply(raw_copy)
 
