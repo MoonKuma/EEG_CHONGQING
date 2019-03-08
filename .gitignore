@@ -1,0 +1,12 @@
+# ignore the following
+*.gz
+*.txt
+/.idea/
+/data/data_compute/
+
+
+
+
+
+
+
