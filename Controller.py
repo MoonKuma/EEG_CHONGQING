@@ -7,7 +7,7 @@
 
 import collections
 import pandas as pd
-from eeg_pre_processing.pre_processing import pre_processing
+from eeg_pre_processing.pre_processing_resting import pre_processing_rest
 from eeg_pre_processing.extract_time_window import get_time_window_data
 from utils.data_merge import data_merge
 from eeg_random_forest.models_to_test import test_regression_model,test_classification_model
@@ -29,24 +29,14 @@ def subjects_pre_processing():
     Pre-processing module
     Caution this is the control panel, where parameters are written INSIDE the funcs and there won't be any return
     """
-    # data_path = 'data_sample/eeg_raw_data/subject_data/EEG_Original'
-    # result_path_erp = 'data_sample/formal_dataset/sub_evoked_data/'
-    # result_path_eeg = 'data_sample/formal_dataset/sub_power_data/'
-    patten = 'tb'
-    sample_rate = 250
-    # event
-    event_id = collections.OrderedDict()
-    event_id['fear'] = 11
-    event_id['neutral'] = 19
-    # event_id = {"fear": 11, "neutral": 19}
+    data_path = 'data/sample_data/Rest/'
+    result_path_eeg = 'data/sample_data/sample_result/'
     test_num = 0
-    ICA_failed, Morlet_failed = pre_processing(data_path=raw_data_path, result_path_erp=result_path_erp,
-                                               result_path_eeg=result_path_eeg, patten=patten, sample_rate=sample_rate,
-                                               event_id=event_id, test_num=test_num)
-
+    target_file = None
+    ICA_failed, Morlet_failed = pre_processing_rest(data_path=data_path, result_path_eeg=result_path_eeg,
+                                                    test_num=test_num,target_file=target_file)
     if len(ICA_failed.keys()) > 0:
         print('ICA failed list: ',ICA_failed.keys())
-
     if len(Morlet_failed.keys()) > 0:
         print('Morlet failed list: ',Morlet_failed.keys())
 
@@ -141,7 +131,7 @@ def test_classification_models():
                           test_times=10)
     pass
 
-# subjects_pre_processing()
+subjects_pre_processing()
 # time_window_selection()
 # merge_data()
 # test_regression_models()

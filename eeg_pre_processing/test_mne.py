@@ -9,18 +9,19 @@
 import mne
 from mne.preprocessing import ICA
 from mne.preprocessing import create_eog_epochs, create_ecg_epochs
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import normalize
+import random
 
 
 
 raw_file1 = 'data/sample_data/Pain_sub5.cnt'
-raw_file2 = 'data/sample_data/Rest_sub5.cnt'
+raw_file2 = 'data/sample_data/Rest/Rest_sub5.cnt'
 
 # I/O - read Neuroscan raw data (.cnt)
-raw1 = mne.io.read_raw_cnt(input_fname=raw_file1, montage=None, preload=True, data_format='int32', eog='header')
+# raw1 = mne.io.read_raw_cnt(input_fname=raw_file1, montage=None, preload=True, data_format='int32', eog='header')
 raw = mne.io.read_raw_cnt(input_fname=raw_file2, montage=None, preload=True, data_format='int32', eog='header')
 # raw_data_list = [raw1, raw2]
 
@@ -66,6 +67,20 @@ ica.apply(raw_copy)
 # epoch data (and reject bad epochs)
 reject = dict(eeg=10.)
 events = mne.find_events(raw_copy, stim_channel='STI 014')
+# self designed events
+times = raw_copy.times # how many dots
+sfreq = raw.info.get('sfreq')
+time_window = (-0.5, 0.5)
+perc = 0.6
+larger_window = int(sfreq*(time_window[1]-time_window[0])/perc)
+start = int(sfreq*(time_window[1]-time_window[0])/2)
+end = larger_window - start
+random_start = random.randint(start,end)
+slice_larger =list(range(0,times.shape[0],larger_window))
+new_events = np.array([[slice_larger[0] + random_start, 0, 99]])
+# change events
+raw_copy.add_events(new_events, stim_channel='STI 014', replace=True)
+
 event_id = {"fear": 11, "neutral": 19}
 color = {11: 'green', 19: 'red'}  # this for plotting events
 mne.viz.plot_events(events, raw_copy.info['sfreq'], raw_copy.first_samp, color=color,
@@ -147,7 +162,7 @@ for channel in index:
 
 
 # read tfr data
-file_path = 'data_sample/formal_dataset/sub_power_data/sub56-tfr.h5'
+file_path = 'data/sample_data/sample_result/sub4-tfr.h5'
 trfs222 = mne.time_frequency.read_tfrs(file_path)
 
 
