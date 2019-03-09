@@ -8,7 +8,7 @@
 import collections
 import pandas as pd
 from eeg_pre_processing.pre_processing_resting import pre_processing_rest
-from eeg_pre_processing.extract_time_window import get_time_window_data
+from eeg_pre_processing.extract_time_window_rest import get_time_window_data
 from utils.data_merge import data_merge
 from eeg_random_forest.models_to_test import test_regression_model,test_classification_model
 # file location
@@ -44,18 +44,12 @@ def subjects_pre_processing():
 # slicing time window
 def time_window_selection():
     """
-    First detect the peak in certain time window
-    Then compute the average amplitude/power data around that peak
+    Average across full time window and channel areas
     This will generate several data files in (.txt) form with time stamp for identification, yet have no return values
     """
-    time_window = {'early': (0.05, 0.15), 'late': (0.2, 0.4)}  # pick time windows (/s)
-    time_span = 0.01 # +-10ms pick time span around peak
-    # is_norm  = True # once normalized the data will only reflect the relative difference across channels
-    # baseline = (None, 0) #
-    # test_s = True
-    # test_times = 2
-    get_time_window_data(erp_data_file=result_path_erp, eeg_data_file=result_path_eeg, save_file=time_window_result,
-                         time_window=time_window, time_span=time_span, test_s=False, test_times=2)
+    eeg_data_file = 'data/sample_data/sample_result/'
+    eeg_time_window_save_path = 'data/sample_data/pre-processed_data/'
+    get_time_window_data(eeg_data_file=eeg_data_file, save_path=eeg_time_window_save_path)
     # subject 56 seems to have some problems?
 
 
@@ -131,7 +125,8 @@ def test_classification_models():
                           test_times=10)
     pass
 
-subjects_pre_processing()
+# subjects_pre_processing()
+time_window_selection()
 # time_window_selection()
 # merge_data()
 # test_regression_models()
