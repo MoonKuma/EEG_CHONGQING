@@ -7,6 +7,8 @@
 
 import os
 import mne
+import numpy as np
+import random
 from mne.preprocessing import ICA
 from mne.preprocessing import create_eog_epochs, create_ecg_epochs
 
@@ -52,7 +54,7 @@ def concat_raw_cnt(raw_file_list, preload=True, data_format='int32', eog='header
         mne.concatenate_raws([raw, raw_tmp])
     return raw
 
-def set_rest_events(raw_file, event_id, time_window, perc=0.5, double_blank = 0.1, remove_existing_events=True):
+def set_rest_events(raw_file, event_id, time_window, perc=0.5, double_blank = 0.1, remove_existing_events=True, stim_channel='STI 014'):
     """
     self-defined events for eeg rest state data
 
@@ -68,16 +70,34 @@ def set_rest_events(raw_file, event_id, time_window, perc=0.5, double_blank = 0.
     And finally events located inside the first 360s or last 360s will be dropped
 
     :param raw_file: mne raw data
-    :param event_id: event_id should be like 'event_id = {"rest": 99}', only the first key is used
+    :param event_id: event_id should be like '99', as representing the resting event mark
     :param time_window: time_windows is how long each events should be considered, eg : (0.5,0.5)
     :param perc: perc means how many percentages of the full data shall be used
     :param double_blank: double_blank marks how much data should be dropped out in the beginning and end (usually messy)
     :param remove_existing_events : whether all existing events should be removed
+    :param stim_channel: Name of the stim channel to add to
 
     :return: the event list of raw data will be modified, meanwhile this will return the events list (an numpy.ndarray)
     """
-
-    pass
+    times = raw_file.times
+    sfreq = raw_file.info.get('sfreq')
+    larger_window = int(sfreq * (time_window[1] - time_window[0]) / perc)
+    before = int(double_blank*times.shape[0])
+    after = int(times.shape[0] - double_blank*times.shape[0])
+    start = int(sfreq * (time_window[1] - time_window[0]) / 2)
+    end = larger_window - start
+    slice_larger = list(range(0, times.shape[0], larger_window))
+    event_array = None
+    for i in range(0, len(slice_larger)-1):
+        random_start = random.randint(start, end)
+        new_events = np.array([[slice_larger[i] + random_start, 0, int(event_id)]])
+        if after>=slice_larger[i] + random_start>=before:
+            if event_array is None:
+                event_array = new_events
+            else:
+                event_array = np.append(event_array, new_events, axis=0)
+    raw_file.add_events(event_array, stim_channel=stim_channel, replace=remove_existing_events)
+    return event_array
 
 
 def perform_ICA(raw, eeg_reject=50.):

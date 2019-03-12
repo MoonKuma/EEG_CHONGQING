@@ -1,6 +1,8 @@
 # ignore the following
 *.gz
 *.cnt
+*.h5
+/venv/
 /.idea/
 /data/data_compute/
 
