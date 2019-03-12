@@ -44,6 +44,7 @@ def pre_processing_rest(data_path, result_path_eeg, test_num=0, target_file = No
     reject = 25.0
     # overwrite load func
     file_dict = get_file_dict(data_path=data_path, patten=patten)
+    Concat_failed = dict()
     ICA_failed = dict()
     Morlet_failed = dict()
     # iterate
@@ -75,7 +76,13 @@ def pre_processing_rest(data_path, result_path_eeg, test_num=0, target_file = No
             print('[Warning]', sub_id, 'is missing!')
             continue
         # concat
-        raw = concat_raw_cnt(file_dict[sub_id])
+        try:
+            raw = concat_raw_cnt(file_dict[sub_id])
+        except:
+            msg = sub_id + 'failed in concat'
+            Concat_failed[sub_id] = traceback.format_exc()
+            print(msg)
+            continue
         # down sample
         raw.resample(sample_rate, npad="auto")
         # filter
@@ -110,4 +117,4 @@ def pre_processing_rest(data_path, result_path_eeg, test_num=0, target_file = No
             Morlet_failed[sub_id] = traceback.format_exc()
     msg = 'Finish computing all data from : ' + str(len(sub_ids)) + ' subjects at time cost: ' + str(time.time() - ts_total)
     print(msg)
-    return [ICA_failed, Morlet_failed]
+    return [ICA_failed, Morlet_failed, Concat_failed]

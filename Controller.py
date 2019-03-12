@@ -33,8 +33,10 @@ def subjects_pre_processing():
     result_path_eeg = 'G:/CQ_UsableEEG_Wenxin/CNT_rar/rest_tfr/'
     test_num = 0
     target_file = ['sub496']
-    ICA_failed, Morlet_failed = pre_processing_rest(data_path=data_path, result_path_eeg=result_path_eeg,
-                                                    test_num=test_num,target_file=target_file)
+    ICA_failed, Morlet_failed, Concat_failed = pre_processing_rest(data_path=data_path, result_path_eeg=result_path_eeg,
+                                                                   test_num=test_num,target_file=target_file)
+    if len(Concat_failed.keys()) > 0:
+        print('Concat failed list: ',Concat_failed.keys())
     if len(ICA_failed.keys()) > 0:
         print('ICA failed list: ',ICA_failed.keys())
     if len(Morlet_failed.keys()) > 0:
