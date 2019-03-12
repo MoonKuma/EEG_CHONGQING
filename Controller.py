@@ -29,10 +29,10 @@ def subjects_pre_processing():
     Pre-processing module
     Caution this is the control panel, where parameters are written INSIDE the funcs and there won't be any return
     """
-    data_path = 'data/sample_data/Rest/'
-    result_path_eeg = 'data/sample_data/sample_result/'
+    data_path = 'G:/CQ_UsableEEG_Wenxin/CNT_rar/rest_cnt/'
+    result_path_eeg = 'G:/CQ_UsableEEG_Wenxin/CNT_rar/rest_tfr/'
     test_num = 0
-    target_file = None
+    target_file = ['sub496']
     ICA_failed, Morlet_failed = pre_processing_rest(data_path=data_path, result_path_eeg=result_path_eeg,
                                                     test_num=test_num,target_file=target_file)
     if len(ICA_failed.keys()) > 0:
