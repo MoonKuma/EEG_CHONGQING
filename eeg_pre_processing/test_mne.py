@@ -16,9 +16,9 @@ from sklearn.preprocessing import normalize
 
 
 
-raw_file1 = 'data/sample_data/Pain_sub5.cnt'
-raw_file2 = 'data/sample_data/Rest_sub5.cnt'
 
+raw_file1 = 'data/sample_data/Pain_sub5.cnt'
+raw_file2 = 'data/sample_data/Rest/Rest_sub5.cnt'
 # I/O - read Neuroscan raw data (.cnt)
 raw1 = mne.io.read_raw_cnt(input_fname=raw_file1, montage=None, preload=True, data_format='int32', eog='header')
 raw = mne.io.read_raw_cnt(input_fname=raw_file2, montage=None, preload=True, data_format='int32', eog='header')
