@@ -125,8 +125,8 @@ def test_classification_models():
                           test_times=10)
     pass
 
-# subjects_pre_processing()
-time_window_selection()
+subjects_pre_processing()
+# time_window_selection()
 # time_window_selection()
 # merge_data()
 # test_regression_models()

@@ -18,9 +18,20 @@ import traceback
 # target_file = None
 
 
-def pre_processing_rest(data_path, result_path_eeg, test_num=0, target_file = None):
+def pre_processing_rest(data_path, result_path_eeg, test_num=0, target_file = None, add_on = True):
+    """
+    eeg data pre-processing, this is specially designed for resting state data, as it will automatically generate
+    random events
+    :param data_path: eeg data path
+    :param result_path_eeg:  where result should be saved
+    :param test_num:  how many num should be tested, if 0, then there will be no testing and all data will be computed
+    :param target_file: a list to identify those that need to be run on
+    :param add_on: whether this process will omit those that already been computed
+    :return: [ICA_failed, Morlet_failed] those failed in ICA/Morlet test
+    """
     # hyper parameters
     patten = 'Rest_.cnt'
+    patten_add_on = '-tfr.h5'
     n_cycles = 2.0
     event_id = {"rest": 99}
     sample_rate = 250
@@ -43,6 +54,18 @@ def pre_processing_rest(data_path, result_path_eeg, test_num=0, target_file = No
     # target
     if target_file is not None:
         sub_ids = [target_file]
+    # add on
+    if add_on:
+        msg = 'Compute only those not existed for add_on = True'
+        print(msg)
+        dir_list = os.listdir(result_path_eeg)
+        for file_name in dir_list:
+            if file_name.endswith(patten_add_on):
+                sub_rm = file_name.replace(patten_add_on,'')
+                if sub_rm in sub_ids:
+                    sub_ids.remove(sub_rm)
+    msg = 'Final sub_ids has length of ' + str(len(sub_ids))
+    print(msg)
     ts_total = time.time()
     for sub_id in sub_ids:
         ts = time.time()
