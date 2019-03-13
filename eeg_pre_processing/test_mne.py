@@ -17,7 +17,7 @@ import random
 
 
 
-raw_file1 = 'data/sample_data/Pain_sub5.cnt'
+raw_file1 = 'data/sample_data/Pain/Pain_sub5.cnt'
 raw_file2 = 'data/sample_data/Rest/Rest_sub5.cnt'
 
 # I/O - read Neuroscan raw data (.cnt)

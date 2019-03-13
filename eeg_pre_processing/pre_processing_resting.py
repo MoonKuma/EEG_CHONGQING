@@ -27,7 +27,7 @@ def pre_processing_rest(data_path, result_path_eeg, test_num=0, target_file = No
     :param test_num:  how many num should be tested, if 0, then there will be no testing and all data will be computed
     :param target_file: a list to identify those that need to be run on
     :param add_on: whether this process will omit those that already been computed
-    :return: [ICA_failed, Morlet_failed] those failed in ICA/Morlet test
+    :return: [ICA_failed, Morlet_failed, Concat_failed] those failed in ICA/Morlet/File loading
     """
     # hyper parameters
     patten = 'Rest_.cnt'

@@ -23,8 +23,8 @@ merge_data_name = 'data_sample/formal_data/merged_data/saving_8307.txt'
 model_result_path = 'data_sample/formal_data/model_result/'
 
 
-# pre-processing eeg raw data
-def subjects_pre_processing():
+# pre-processing resting raw data
+def subjects_pre_processing_resting():
     """
     Pre-processing module
     Caution this is the control panel, where parameters are written INSIDE the funcs and there won't be any return
@@ -41,6 +41,11 @@ def subjects_pre_processing():
         print('ICA failed list: ',ICA_failed.keys())
     if len(Morlet_failed.keys()) > 0:
         print('Morlet failed list: ',Morlet_failed.keys())
+
+# pre-processing pain raw data
+def subjects_pre_processing_pain():
+    pass
+
 
 
 # slicing time window
@@ -127,7 +132,7 @@ def test_classification_models():
                           test_times=10)
     pass
 
-subjects_pre_processing()
+subjects_pre_processing_resting()
 # time_window_selection()
 # time_window_selection()
 # merge_data()
