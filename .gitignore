@@ -1,6 +1,7 @@
 # ignore the following
 *.gz
 *.cnt
+*.fif
 *.h5
 /venv/
 /.idea/

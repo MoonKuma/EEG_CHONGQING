@@ -113,8 +113,10 @@ def perform_ICA(raw, eeg_reject=50.):
     return ica
 
 
-def epoch_raw(raw_copy, time_window, event_id, baseline= (None, 0), reject = 10.0, stim_channel='STI 014'):
+def epoch_raw(raw_copy, time_window, event_id, baseline=(None, 0), reject=10.0, stim_channel='STI 014'):
     reject = dict(eeg=reject)
+    # If see : ValueError: You have 1 events shorter than the shortest_event......
+    # That usually mean you have down sample the data before epoch
     events = mne.find_events(raw_copy, stim_channel=stim_channel)
     tmin = time_window[0]  # before
     tmax = time_window[1]  # after
@@ -127,6 +129,38 @@ def epoch_raw(raw_copy, time_window, event_id, baseline= (None, 0), reject = 10.
     for cond in event_id:
         evoked_list.append(epochs[cond].average())
     return [evoked_list, epochs]
+
+def epoch_raw_downsample(raw_copy, time_window, event_id, sample_rate, baseline=(None, 0), reject=10.0, stim_channel='STI 014'):
+    """
+    For event related cases, down sampling after epoch is more proper. Since this won't cause a conflict in event labeling
+    :param raw_copy: mne eeg raw data
+    :param time_window: time window
+    :param event_id: event id dict
+    :param sample_rate: resample rate
+    :param baseline: baseline correction, this may comes meaningless?
+    :param reject: reject upper than
+    :param stim_channel: Name of the stim channel to add to
+    :return:[evoked_list, epochs] as above, evoked_list is the list of averaged ERP for each condition,
+            epochs is each truncated epoch used for further computation like Morlet power
+    """
+    reject = dict(eeg=reject)
+    # If see : ValueError: You have 1 events shorter than the shortest_event......
+    # That usually mean you have down sample the data before epoch
+    events = mne.find_events(raw_copy, stim_channel=stim_channel)
+    tmin = time_window[0]  # before
+    tmax = time_window[1]  # after
+    baseline = baseline  # means from the first instant to t = 0
+    picks_eeg = mne.pick_types(raw_copy.info, meg=False, eeg=True, eog=False, stim=False,
+                               exclude=['VEOG', 'HEOG'])
+    epochs = mne.Epochs(raw_copy, events, event_id, tmin, tmax, proj=True, picks=picks_eeg, baseline=baseline,
+                        reject=reject, reject_by_annotation=True)
+    epochs.load_data()
+    epochs.resample(sample_rate)
+    evoked_list = list()
+    for cond in event_id:
+        evoked_list.append(epochs[cond].average())
+    return [evoked_list, epochs]
+
 
 
 def morlet_epochs(epochs, freqs, n_cycles, event_id, decim=1, n_jobs=1):

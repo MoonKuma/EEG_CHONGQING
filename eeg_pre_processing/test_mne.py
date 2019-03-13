@@ -17,7 +17,7 @@ import random
 
 
 
-raw_file1 = 'data/sample_data/Pain/Pain_sub5.cnt'
+raw_file1 = 'data/sample_data/Pain/Pain_sub9.cnt'
 raw_file2 = 'data/sample_data/Rest/Rest_sub5.cnt'
 
 # I/O - read Neuroscan raw data (.cnt)
@@ -141,7 +141,7 @@ file_path = 'data_sample/eeg_raw_data/subject_data/Behavior_Original/behavior_or
 txt_data = pd.read_table(file_path)
 
 # read evoked data
-file_path = 'data_sample/formal_dataset/sub_evoked_data/sub56-ave.fif'
+file_path = 'data/sample_data/sample_result/pain_ave/sub5-ave.fif'
 evokes = mne.read_evokeds(file_path)  # caution this data is not baseline corrected
 index = evokes[0].ch_names
 evoke = evokes[0]
@@ -162,7 +162,7 @@ for channel in index:
 
 
 # read tfr data
-file_path = 'data/sample_data/sample_result/sub4-tfr.h5'
+file_path = 'data/sample_data/sample_result/pain_tfr/sub9-tfr.h5'
 trfs222 = mne.time_frequency.read_tfrs(file_path)
 
 

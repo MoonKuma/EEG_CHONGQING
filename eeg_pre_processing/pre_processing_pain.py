@@ -33,11 +33,10 @@ def pre_processing_pain(data_path, result_path_erp, result_path_eeg, test_num = 
     patten = 'Pain_.cnt'
     patten_add_on = '-tfr.h5'
     sample_rate = 250
-    stim_channel='STI 014'
 
     # erp
     filter_erp = (1., 50.)
-    time_window_erp = (-1.0, 1.0)
+    time_window_erp = (-0.5, 1.0)
     baseline_erp = (None, 0)
     # eeg
     filter_eeg = (1., 50.)
@@ -87,18 +86,13 @@ def pre_processing_pain(data_path, result_path_erp, result_path_eeg, test_num = 
             Concat_failed[sub_id] = traceback.format_exc()
             print(msg)
             continue
+
         # down sample
-        raw.resample(sample_rate, npad="auto")
+        # Down sampling raw data here may cause the event conflicts in this case
+        # raw.resample(sample_rate, npad="auto")
 
         # filter
         raw.filter(filter_erp[0], filter_erp[1], fir_design='firwin')
-        # modify events list
-        events = mne.find_events(raw, stim_channel=stim_channel)
-        for i in range(0, events.shape[0]):
-            if events[i, 2] == 114:
-                events[i, 2] = 113
-            if events[i, 2] == 124:
-                events[i, 2] = 123
 
         # ICA
         ica = None
@@ -109,16 +103,18 @@ def pre_processing_pain(data_path, result_path_erp, result_path_eeg, test_num = 
             print(msg)
             ICA_failed[sub_id] = traceback.format_exc()
         # Epoch
-        erp_evoked_list, erp_epochs = epoch_raw(raw_copy=raw, time_window=time_window_erp, event_id=event_id,
-                                                baseline=baseline_erp, reject=reject)
+        erp_evoked_list, erp_epochs = epoch_raw_downsample(raw_copy=raw, time_window=time_window_erp,
+                                                           sample_rate=sample_rate,
+                                                           event_id=event_id, baseline=baseline_erp, reject=reject)
         # Save evoked data
         file_name = result_path_erp + sub_id + '-ave.fif'
         mne.write_evokeds(file_name, erp_evoked_list)
         msg = '====finish computing erp : ' + sub_id
         print(msg)
         # Epoch
-        eeg_evoked_list, eeg_epochs = epoch_raw(raw_copy=raw, time_window=time_window_eeg, event_id=event_id,
-                                                baseline=baseline_eeg, reject=reject)
+        eeg_evoked_list, eeg_epochs = epoch_raw_downsample(raw_copy=raw, time_window=time_window_eeg,
+                                                           sample_rate=sample_rate,
+                                                           event_id=event_id, baseline=baseline_eeg, reject=reject)
         # power
         try:
             powers = morlet_epochs(epochs=eeg_epochs, event_id=event_id, freqs=freqs, n_cycles=n_cycles)

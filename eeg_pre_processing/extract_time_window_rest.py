@@ -13,7 +13,7 @@ from sklearn.preprocessing import normalize
 import time
 import traceback
 
-def get_time_window_data(eeg_data_file, save_path):
+def get_time_window_rest(eeg_data_file, save_path):
     subs = os.listdir(eeg_data_file)
     channel_head = ['F', 'C', 'T', 'P', 'O']
     result_col = list()

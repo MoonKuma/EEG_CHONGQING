@@ -11,7 +11,7 @@
 
 - Load : .cnt -> ram
 - down sample: 250 Hz
-- Filter: (1~50), band
+- Filter: (1~50)
 - ICA to repair eye movement : 25 components
 - Randomly Pick events window:  continuously 1 seconds randomly located in every 2 seconds window
 - Epoch & reject : >25
@@ -30,17 +30,16 @@
 
 ##### Goal
 
-- Averaged EEG Morlet power data on 5 channel areas (F/C/T/P/O) times 5 frequency bands(2.5, 5.0, 10.0, 17., 35.) and 5 time window(0~200, 200~400, 400~600, 600~800, 800~1000)
+- Averaged EEG Morlet power data on 5 channel areas (F/C/T/P/O) times 5 frequency bands(2.5, 5.0, 10.0, 17., 35.), 5 time windows(0~200, 200~400, 400~600, 600~800, 800~1000) and 4 type of events (Pain_F/Pain_M/Neutral_F/Neutral_M)
 - Auto-detected peak latency (1) and peak amplitude (ERP) averaged across 5 channel areas in 2 time windows (0~200, 200~400)
 
 ##### Pipeline
 
 - Load
-- down sample
 - Filter
 - ICA
 - Epoch by events type & Reject
-- Morlet & Average across channels
-- Get ERP peak latency/amplitude & Average across channels
+- Down sample (conflict may occur if down sampling raw data) 
+- Morlet & Average across time windows, channels, baseline (-1~0)
+- Get ERP peak latency/amplitude & Average across  time windows, channels, baseline (-1~0)
 - Save original/normalized data
-

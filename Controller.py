@@ -8,7 +8,8 @@
 import collections
 import pandas as pd
 from eeg_pre_processing.pre_processing_resting import pre_processing_rest
-from eeg_pre_processing.extract_time_window_rest import get_time_window_data
+from eeg_pre_processing.pre_processing_pain import pre_processing_pain
+from eeg_pre_processing.extract_time_window_rest import get_time_window_rest
 from utils.data_merge import data_merge
 from eeg_random_forest.models_to_test import test_regression_model,test_classification_model
 # file location
@@ -44,19 +45,36 @@ def subjects_pre_processing_resting():
 
 # pre-processing pain raw data
 def subjects_pre_processing_pain():
+    """
+        Pre-processing module
+        Caution this is the control panel, where parameters are written INSIDE the funcs and there won't be any return
+    """
+    data_path = 'data/sample_data/Pain/'
+    result_path_eeg = 'data/sample_data/sample_result/pain_tfr/'
+    result_path_erp = 'data/sample_data/sample_result/pain_ave/'
+    test_num = 0
+    target_file = None
+    ICA_failed, Morlet_failed, Concat_failed = pre_processing_pain(data_path=data_path, result_path_eeg=result_path_eeg,
+                                                                   result_path_erp=result_path_erp, test_num=test_num, target_file=target_file)
+    if len(Concat_failed.keys()) > 0:
+        print('Concat failed list: ', Concat_failed.keys())
+    if len(ICA_failed.keys()) > 0:
+        print('ICA failed list: ', ICA_failed.keys())
+    if len(Morlet_failed.keys()) > 0:
+        print('Morlet failed list: ', Morlet_failed.keys())
     pass
 
 
 
 # slicing time window
-def time_window_selection():
+def time_window_rest():
     """
     Average across full time window and channel areas
     This will generate several data files in (.txt) form with time stamp for identification, yet have no return values
     """
     eeg_data_file = 'data/sample_data/sample_result/'
     eeg_time_window_save_path = 'data/sample_data/pre-processed_data/'
-    get_time_window_data(eeg_data_file=eeg_data_file, save_path=eeg_time_window_save_path)
+    get_time_window_rest(eeg_data_file=eeg_data_file, save_path=eeg_time_window_save_path)
     # subject 56 seems to have some problems?
 
 
@@ -132,9 +150,9 @@ def test_classification_models():
                           test_times=10)
     pass
 
-subjects_pre_processing_resting()
-# time_window_selection()
-# time_window_selection()
+# subjects_pre_processing_resting()
+subjects_pre_processing_pain()
+# time_window_rest()
 # merge_data()
 # test_regression_models()
 # test_classification_models()
