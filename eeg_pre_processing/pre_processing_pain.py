@@ -52,6 +52,7 @@ def pre_processing_pain(data_path, result_path_erp, result_path_eeg, test_num = 
     # subjects failed ICA/Morlet
     Concat_failed = dict()
     ICA_failed = dict()
+    Epoched_failed = dict()
     Morlet_failed = dict()
     # iterate
     sub_ids = list(file_dict.keys())
@@ -103,18 +104,30 @@ def pre_processing_pain(data_path, result_path_erp, result_path_eeg, test_num = 
             print(msg)
             ICA_failed[sub_id] = traceback.format_exc()
         # Epoch
-        erp_evoked_list, erp_epochs = epoch_raw_downsample(raw_copy=raw, time_window=time_window_erp,
+        try:
+            erp_evoked_list, erp_epochs = epoch_raw_downsample(raw_copy=raw, time_window=time_window_erp,
                                                            sample_rate=sample_rate,
                                                            event_id=event_id, baseline=baseline_erp, reject=reject)
+        except:
+            msg = '===Epoch failed for subjects:' + sub_id
+            print(msg)
+            Epoched_failed[sub_id] = traceback.format_exc()
+            continue
         # Save evoked data
         file_name = result_path_erp + sub_id + '-ave.fif'
         mne.write_evokeds(file_name, erp_evoked_list)
         msg = '====finish computing erp : ' + sub_id
         print(msg)
         # Epoch
-        eeg_evoked_list, eeg_epochs = epoch_raw_downsample(raw_copy=raw, time_window=time_window_eeg,
+        try:
+            eeg_evoked_list, eeg_epochs = epoch_raw_downsample(raw_copy=raw, time_window=time_window_eeg,
                                                            sample_rate=sample_rate,
                                                            event_id=event_id, baseline=baseline_eeg, reject=reject)
+        except:
+            msg = '===Epoch failed for subjects:' + sub_id
+            print(msg)
+            Epoched_failed[sub_id] = traceback.format_exc()
+            continue
         # power
         try:
             powers = morlet_epochs(epochs=eeg_epochs, event_id=event_id, freqs=freqs, n_cycles=n_cycles)
@@ -130,4 +143,4 @@ def pre_processing_pain(data_path, result_path_erp, result_path_eeg, test_num = 
     msg = 'Finish computing all data from : ' + str(len(sub_ids)) + ' subjects at time cost: ' + str(time.time() - ts_total)
     print(msg)
 
-    return [ICA_failed, Morlet_failed, Concat_failed]
+    return [ICA_failed, Morlet_failed, Concat_failed, Epoched_failed]

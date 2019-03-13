@@ -54,12 +54,17 @@ def subjects_pre_processing_pain():
     result_path_erp = 'data/sample_data/sample_result/pain_ave/'
     test_num = 0
     target_file = None
-    ICA_failed, Morlet_failed, Concat_failed = pre_processing_pain(data_path=data_path, result_path_eeg=result_path_eeg,
-                                                                   result_path_erp=result_path_erp, test_num=test_num, target_file=target_file)
+    ICA_failed, Morlet_failed, Concat_failed, Epoched_failed = pre_processing_pain(data_path=data_path,
+                                                                                   result_path_eeg=result_path_eeg,
+                                                                                   result_path_erp=result_path_erp,
+                                                                                   test_num=test_num,
+                                                                                   target_file=target_file)
     if len(Concat_failed.keys()) > 0:
         print('Concat failed list: ', Concat_failed.keys())
     if len(ICA_failed.keys()) > 0:
         print('ICA failed list: ', ICA_failed.keys())
+    if len(Epoched_failed.keys()) > 0:
+        print('Epoched failed list: ', Epoched_failed.keys())
     if len(Morlet_failed.keys()) > 0:
         print('Morlet failed list: ', Morlet_failed.keys())
     pass
