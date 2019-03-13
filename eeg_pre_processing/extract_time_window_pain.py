@@ -20,6 +20,7 @@ file_path_erp = 'data/sample_data/sample_result/pain_ave/'
 baseline = (None, 0)
 time_window = {'early': (0.01, 0.3), 'late': (0.25, 0.4)} # this should be decided after averaging all events
 time_span = 0.01
+channel_head = ['F', 'C', 'T', 'P', 'O']
 
 def _get_file_list(file_path, start, end):
     # intend to be private, don't call this from outside
@@ -38,6 +39,25 @@ def _add_col(col_names, col_key):
     if col_key not in col_names:
         col_names.append(col_key)
 
+def _average_channel_head(channel_head, channels, data_array):
+    # intend to be private, don't call this from outside
+    channel_group = dict()  # {'F':set(),'C':set(),'T':set(),'P':set(),'O':set()}
+    result_array = None
+    for head in channel_head:
+        channel_group[head] = set()
+    for channel in channels:
+        for key in channel_group.keys():
+            if str(channel).startswith(key):
+                channel_group[key].add(channels.index(channel))
+    for key in channel_head:
+        channel_list = list(channel_group[key])
+        picked_data = data_array[channel_list, :]
+        picked_mean = np.mean(picked_data, axis=0).reshape(1, picked_data.shape[1])
+        if result_array is None:
+            result_array = picked_mean
+        else:
+            result_array = np.append(result_array, picked_mean, axis=0)
+    return result_array
 
 data_dict = dict()
 col_names = list()
@@ -61,7 +81,7 @@ for sub_id in file_dict.keys():
             # save peak amplitude
             event_copy = event.copy()
             slice_evt = event_copy.crop(tmin=peak - time_span, tmax=peak + time_span)
-
+            mean = np.mean(slice_evt.data, axis=1).reshape(slice_evt.data.shape[0], 1)
 
 
 # do eeg
