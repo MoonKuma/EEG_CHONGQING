@@ -54,7 +54,7 @@ def pre_processing_rest(data_path, result_path_eeg, test_num=0, target_file = No
         sub_ids = sub_ids[0: test_num]
     # target
     if target_file is not None:
-        sub_ids = [target_file]
+        sub_ids = target_file
     # add on
     if add_on:
         msg = 'Compute only those not existed for add_on = True'
