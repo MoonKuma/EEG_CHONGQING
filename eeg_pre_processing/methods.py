@@ -114,10 +114,22 @@ def perform_ICA(raw, eeg_reject=50.):
 
 
 def epoch_raw(raw_copy, time_window, event_id, baseline=(None, 0), reject=10.0, stim_channel='STI 014'):
+    """
+    epoch raw data
+    :param raw_copy: mne eeg raw data
+    :param time_window: time window
+    :param event_id: event id dict
+    :param baseline: baseline correction, this may comes meaningless?
+    :param reject: reject upper than
+    :param stim_channel: Name of the stim channel to add to
+    :return:[evoked_list, epochs] as above, evoked_list is the list of averaged ERP for each condition,
+            epochs is each truncated epoch used for further computation like Morlet power
+    """
     reject = dict(eeg=reject)
     # If see : ValueError: You have 1 events shorter than the shortest_event......
-    # That usually mean you have down sample the data before epoch
-    events = mne.find_events(raw_copy, stim_channel=stim_channel)
+    # That usually mean something goes wrong with the stimuli
+    # setting shortest_event=0 will solve this problem once for all, yet...it seems not that reasonable
+    events = mne.find_events(raw_copy, stim_channel=stim_channel, shortest_event=0)
     tmin = time_window[0]  # before
     tmax = time_window[1]  # after
     baseline = baseline  # means from the first instant to t = 0
@@ -130,9 +142,10 @@ def epoch_raw(raw_copy, time_window, event_id, baseline=(None, 0), reject=10.0, 
         evoked_list.append(epochs[cond].average())
     return [evoked_list, epochs]
 
+
 def epoch_raw_downsample(raw_copy, time_window, event_id, sample_rate, baseline=(None, 0), reject=10.0, stim_channel='STI 014'):
     """
-    For event related cases, down sampling after epoch is more proper. Since this won't cause a conflict in event labeling
+    @deprecated
     :param raw_copy: mne eeg raw data
     :param time_window: time window
     :param event_id: event id dict
@@ -144,10 +157,8 @@ def epoch_raw_downsample(raw_copy, time_window, event_id, sample_rate, baseline=
             epochs is each truncated epoch used for further computation like Morlet power
     """
     reject = dict(eeg=reject)
-    # If see : ValueError: You have 1 events shorter than the shortest_event......
-    # That usually mean you have down sample the data before epoch
-    # or something goes wrong with the stimuli
-    events = mne.find_events(raw_copy, stim_channel=stim_channel, min_duration=2/raw_copy.info['sfreq'])
+
+    events = mne.find_events(raw_copy, stim_channel=stim_channel, shortest_event=0)
     tmin = time_window[0]  # before
     tmax = time_window[1]  # after
     baseline = baseline  # means from the first instant to t = 0

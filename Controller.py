@@ -10,6 +10,7 @@ import pandas as pd
 from eeg_pre_processing.pre_processing_resting import pre_processing_rest
 from eeg_pre_processing.pre_processing_pain import pre_processing_pain
 from eeg_pre_processing.extract_time_window_rest import get_time_window_rest
+from eeg_pre_processing.plot_erp import plot_erp
 from utils.data_merge import data_merge
 from eeg_random_forest.models_to_test import test_regression_model,test_classification_model
 # file location
@@ -69,8 +70,6 @@ def subjects_pre_processing_pain():
         print('Morlet failed list: ', Morlet_failed.keys())
     pass
 
-
-
 # slicing time window
 def time_window_rest():
     """
@@ -80,8 +79,13 @@ def time_window_rest():
     eeg_data_file = 'data/sample_data/sample_result/'
     eeg_time_window_save_path = 'data/sample_data/pre-processed_data/'
     get_time_window_rest(eeg_data_file=eeg_data_file, save_path=eeg_time_window_save_path)
-    # subject 56 seems to have some problems?
 
+# plot erp
+def plot_erp():
+    file_path_erp = ''
+    plot_erp(file_path_erp=file_path_erp)
+    pass
+# slice erp
 
 # merge this two
 def merge_data():

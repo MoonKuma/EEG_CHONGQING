@@ -39,8 +39,8 @@
 ##### Goal
 
 - EEG : Averaged EEG Morlet power data on 5 channel areas (F/C/T/P/O) times 5 frequency bands(2.5, 5.0, 10.0, 17., 35.) in 5 time windows(0~200, 200~400, 400~600, 600~800, 800~1000ms)  for all 4 conditions
-- ERP-latency : Auto-detected peak latency (1) in 2 time windows (0~200, 200~400ms) for all 4 conditions
-- ERP-amplitude : Peak amplitude averaged across 5 channel areas(F/C/T/P/O)  in 2 time windows (0~200, 200~400ms)
+- ERP-latency : Auto-detected peak latency (1) in 2 time windows (50~200, 200~400ms) for all 4 conditions
+- ERP-amplitude : Peak amplitude averaged across 5 channel areas(F/C/T/P/O)  in 2 time windows (50~200, 200~400ms)
 
 ##### Pipeline
 
@@ -57,7 +57,7 @@
     - Morlet: power only, freqs: [2.5, 5.0, 10.0, 17., 35.],  n_cycles = freqs / 2.
 - Time window ERP
   - Baseline correction: (-0.5,0)
-  - Get peak latency in time windows (0~200, 200~400ms) for all 4 conditions
+  - Get peak latency in time windows (50~200, 200~400ms) for all 4 conditions
   - Get peak amplitude in +- 10ms around each peaks
   - Average amplitude across channels : F/C/T/P/O
   - Normalize (L2) across channel areas : F/C/T/P/O [optional]

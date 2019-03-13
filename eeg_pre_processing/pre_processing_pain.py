@@ -89,8 +89,7 @@ def pre_processing_pain(data_path, result_path_erp, result_path_eeg, test_num = 
             continue
 
         # down sample
-        # Down sampling raw data here may cause the event conflicts in this case
-        # raw.resample(sample_rate, npad="auto")
+        raw.resample(sample_rate, npad="auto")
 
         # filter
         raw.filter(filter_erp[0], filter_erp[1], fir_design='firwin')
@@ -105,9 +104,8 @@ def pre_processing_pain(data_path, result_path_erp, result_path_eeg, test_num = 
             ICA_failed[sub_id] = traceback.format_exc()
         # Epoch
         try:
-            erp_evoked_list, erp_epochs = epoch_raw_downsample(raw_copy=raw, time_window=time_window_erp,
-                                                           sample_rate=sample_rate,
-                                                           event_id=event_id, baseline=baseline_erp, reject=reject)
+            erp_evoked_list, erp_epochs = epoch_raw(raw_copy=raw, time_window=time_window_erp,
+                                                    event_id=event_id, baseline=baseline_erp, reject=reject)
         except:
             msg = '===Epoch failed for subjects:' + sub_id
             print(msg)
@@ -120,9 +118,8 @@ def pre_processing_pain(data_path, result_path_erp, result_path_eeg, test_num = 
         print(msg)
         # Epoch
         try:
-            eeg_evoked_list, eeg_epochs = epoch_raw_downsample(raw_copy=raw, time_window=time_window_eeg,
-                                                           sample_rate=sample_rate,
-                                                           event_id=event_id, baseline=baseline_eeg, reject=reject)
+            eeg_evoked_list, eeg_epochs = epoch_raw(raw_copy=raw, time_window=time_window_eeg,
+                                                    event_id=event_id, baseline=baseline_eeg, reject=reject)
         except:
             msg = '===Epoch failed for subjects:' + sub_id
             print(msg)
