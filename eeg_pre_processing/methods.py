@@ -146,7 +146,8 @@ def epoch_raw_downsample(raw_copy, time_window, event_id, sample_rate, baseline=
     reject = dict(eeg=reject)
     # If see : ValueError: You have 1 events shorter than the shortest_event......
     # That usually mean you have down sample the data before epoch
-    events = mne.find_events(raw_copy, stim_channel=stim_channel)
+    # or something goes wrong with the stimuli
+    events = mne.find_events(raw_copy, stim_channel=stim_channel, min_duration=2/raw_copy.info['sfreq'])
     tmin = time_window[0]  # before
     tmax = time_window[1]  # after
     baseline = baseline  # means from the first instant to t = 0
