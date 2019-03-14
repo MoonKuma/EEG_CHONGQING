@@ -12,7 +12,7 @@ import numpy as np
 import collections
 import mne
 import time
-
+from sklearn.preprocessing import normalize
 
 # file_path_erp = 'data/sample_data/sample_result/pain_ave/'
 
@@ -37,10 +37,11 @@ def plot_erp(file_path_erp):
         for event in evoked_list:
             comment = event.comment
             data = event.data
+            norm_data = normalize(data, axis=1)
             if comment not in data_dict.keys():
-                data_dict[comment] = data
+                data_dict[comment] = norm_data
             else:
-                data_dict[comment] = data_dict[comment] + data
+                data_dict[comment] = data_dict[comment] + norm_data
         count += 1
 
     for event in data_dict.keys():
