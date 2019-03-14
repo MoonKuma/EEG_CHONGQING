@@ -10,6 +10,7 @@ import numpy as np
 import collections
 import mne
 from sklearn.preprocessing import normalize
+from eeg_pre_processing.methods import save_file_dict
 import time
 import traceback
 
@@ -53,7 +54,7 @@ def get_time_window_rest(eeg_data_file, save_path):
             if result_array.shape == (len(channel_head), freqs.shape[0]) == norm_result_array.shape:
                 for channel in channel_head:
                     for index in range(0, freqs.shape[0]):
-                        key = 'rest_ori_' + channel + str(freqs[index])
+                        key = 'rest_orig_' + channel + str(freqs[index])
                         if key not in result_col:
                             result_col.append(key)
                         result_dict[key] = result_array[channel_head.index(channel),index]
@@ -71,16 +72,6 @@ def get_time_window_rest(eeg_data_file, save_path):
     result_col = sorted(result_col)
     result_col_full = list(['sub_id']) + result_col
     # write in file
-    save_name = 'eeg_result_v' + str(int(time.time())%10000) + '.txt'
+    save_name = 'rest_eeg_result_v' + str(int(time.time())%10000) + '.txt'
     save_file = os.path.join(save_path,save_name)
-    with open(save_file, 'w') as file_w:
-        head = ','.join(result_col_full) + '\n'
-        file_w.write(head)
-        for sub in result_full.keys():
-            data_list = list()
-            data = result_full[sub]
-            for key in result_col_full:
-                data_list.append(str(data.setdefault(key,'NaN')))
-            str2wri = ','.join(data_list) + '\n'
-            file_w.write(str2wri)
-
+    save_file_dict(save_file, result_col=result_col_full, result_dict=result_full)

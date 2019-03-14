@@ -174,7 +174,6 @@ def epoch_raw_downsample(raw_copy, time_window, event_id, sample_rate, baseline=
     return [evoked_list, epochs]
 
 
-
 def morlet_epochs(epochs, freqs, n_cycles, event_id, decim=1, n_jobs=1):
     # compute power
     power_list = list()
@@ -184,3 +183,71 @@ def morlet_epochs(epochs, freqs, n_cycles, event_id, decim=1, n_jobs=1):
         power.comment = cond
         power_list.append(power)
     return power_list
+
+
+def average_channel_head(channel_head, channels, data_array):
+    """
+    average eeg data array according to channel's head name like F/O/C
+    :param channel_head: eg: {'F':set(),'C':set(),'T':set(),'P':set(),'O':set()}
+    :param channels: a channels list like ['Fp2', 'F7']..., don't construct this, try get this directly from a mne object
+    :param data_array: ndarray of data which should be of the same size of channels
+    :return: averaged result ndarray
+    """
+    channel_group = dict()  # {'F':set(),'C':set(),'T':set(),'P':set(),'O':set()}
+    result_array = None
+    for head in channel_head:
+        channel_group[head] = set()
+    for channel in channels:
+        for key in channel_group.keys():
+            if str(channel).startswith(key):
+                channel_group[key].add(channels.index(channel))
+    for key in channel_head:
+        channel_list = list(channel_group[key])
+        picked_data = data_array[channel_list, :]
+        picked_mean = np.mean(picked_data, axis=0).reshape(1, picked_data.shape[1])
+        if result_array is None:
+            result_array = picked_mean
+        else:
+            result_array = np.append(result_array, picked_mean, axis=0)
+    return result_array
+
+def get_file_list(file_path, start, end):
+    """
+    get the file dict of same patten
+    :param file_path: file path
+    :param start: patten starts with, like 'sub'
+    :param end: patten ends with, like 'ave-fif' or 'tfr-h5'
+    :return: dict object {'sub3':os.path.abspath(sub3)}
+    """
+    file_dict = dict()  # {'sub3':'data/sample_data/sample_result/pain_ave/sub5-ave.fif'}
+    files = os.listdir(file_path)
+    for file_name in files:
+        if file_name.startswith(start) and file_name.endswith(end):
+            inner_file = os.path.join(file_path, file_name)
+            key = file_name.replace(end, '')
+            file_dict[key] = os.path.abspath(inner_file)
+    return file_dict
+
+
+def save_file_dict(save_name, result_dict, result_col, delimiter=',', missing='NaN'):
+    """
+    save certain dict object into files
+    :param save_name: save file name
+    :param result_dict: dict contains data
+    :param result_col: list of keys, this both label keys and marked their rank
+    :param delimiter: delimiter
+    :param missing: missing value
+    :return: 1 as everything goes well
+    """
+    save_file = save_name
+    with open(save_file, 'w') as file_w:
+        head = delimiter.join(result_col) + '\n'
+        file_w.write(head)
+        for sub in result_dict.keys():
+            data_list = list()
+            data = result_dict[sub]
+            for key in result_col:
+                data_list.append(str(data.setdefault(key,missing)))
+            str2wri = delimiter.join(data_list) + '\n'
+            file_w.write(str2wri)
+        return 1

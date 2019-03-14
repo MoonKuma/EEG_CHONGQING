@@ -62,3 +62,10 @@ def plot_erp(file_path_erp):
     msg = '====finish faked_summary erp'
     print(msg)
 
+
+def plot_result(result_file='data/sample_data/sample_result/faked_summary-ave.fif'):
+    evoked_data = mne.read_evokeds(result_file)
+    joint_kwargs = dict(ts_args=dict(time_unit='s'),
+                        topomap_args=dict(time_unit='s'))
+    for cond in evoked_data:
+        cond.plot_joint(title=cond.comment, **joint_kwargs)
