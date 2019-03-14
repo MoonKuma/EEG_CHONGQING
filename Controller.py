@@ -10,7 +10,7 @@ import pandas as pd
 from eeg_pre_processing.pre_processing_resting import pre_processing_rest
 from eeg_pre_processing.pre_processing_pain import pre_processing_pain
 from eeg_pre_processing.extract_time_window_rest import get_time_window_rest
-from eeg_pre_processing.extract_time_window_pain import get_erp_pain
+from eeg_pre_processing.extract_time_window_pain import get_erp_pain,get_eeg_pain
 from eeg_pre_processing.plot_erp import plot_erp
 from utils.data_merge import data_merge
 from eeg_random_forest.models_to_test import test_regression_model,test_classification_model
@@ -81,22 +81,34 @@ def time_window_rest():
     eeg_time_window_save_path = 'data/sample_data/pre-processed_data/'
     get_time_window_rest(eeg_data_file=eeg_data_file, save_path=eeg_time_window_save_path)
 
-# plot erp
+# plot erp before deciding time window
 def plot_erp():
     file_path_erp = ''
     plot_erp(file_path_erp=file_path_erp)
     pass
-# time window pain
+
+# time window pain erp
 def time_window_pain_erp():
     """
-        Get erp peak and amplitude data in certain time window for pain study
+    Get erp peak and amplitude data in certain time window for pain study
     """
     data_path = 'data/sample_data/sample_result/pain_ave/'
     save_path = 'data/sample_data/pre-processed_data/'
     get_erp_pain(file_path_erp=data_path, save_path=save_path)
 
+def time_winodw_pain_eeg():
+    """
+    Get eeg data in certain time window for pain study
+    """
+    data_path = 'data/sample_data/sample_result/pain_tfr/'
+    save_path = 'data/sample_data/pre-processed_data/'
+    get_eeg_pain(file_path=data_path, save_path=save_path)
 
-# merge this two
+
+
+# clean behavior data
+
+# merge them
 def merge_data():
     """
     This is to merge the behavior and brain data and do some simple
@@ -171,7 +183,8 @@ def test_classification_models():
 # subjects_pre_processing_resting()
 # subjects_pre_processing_pain()
 # time_window_rest()
-time_window_pain_erp()
+# time_window_pain_erp()
+time_winodw_pain_eeg()
 # merge_data()
 # test_regression_models()
 # test_classification_models()

@@ -190,7 +190,7 @@ def average_channel_head(channel_head, channels, data_array):
     average eeg data array according to channel's head name like F/O/C
     :param channel_head: eg: {'F':set(),'C':set(),'T':set(),'P':set(),'O':set()}
     :param channels: a channels list like ['Fp2', 'F7']..., don't construct this, try get this directly from a mne object
-    :param data_array: ndarray of data which should be of the same size of channels
+    :param data_array: ndarray of data which should be of the same size of channels in the first dimension
     :return: averaged result ndarray
     """
     channel_group = dict()  # {'F':set(),'C':set(),'T':set(),'P':set(),'O':set()}

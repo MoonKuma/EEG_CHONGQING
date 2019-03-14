@@ -3,6 +3,7 @@
 *.cnt
 *.fif
 *.h5
+/data/sample_data/pre-processed_data/
 /venv/
 /.idea/
 /data/data_compute/
