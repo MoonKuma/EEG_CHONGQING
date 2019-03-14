@@ -45,7 +45,7 @@ def plot_erp(file_path_erp):
         count += 1
 
     for comment in data_dict.keys():
-        data_dict[comment] = data_dict[comment]/count
+        data_dict[comment] = data_dict[comment]/(10000*count)
 
     # FAKE ONE
     sub_id = list(erp_files.keys())[0]
