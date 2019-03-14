@@ -54,6 +54,11 @@ def plot_erp(file_path_erp):
     for event in evoked_list:
         comment = event.comment
         event.data = data_dict[comment]
-        event.plot_joint(title=comment)
+        event.plot_joint(title=comment) # maybe you don't want to plot right away
 
+    # save the faked one
+    file_name = file_path_erp + 'faked_summary-ave.fif'
+    mne.write_evokeds(file_name, evoked_list)
+    msg = '====finish faked_summary erp'
+    print(msg)
 
