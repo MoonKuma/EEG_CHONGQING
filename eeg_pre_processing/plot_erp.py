@@ -37,14 +37,14 @@ def plot_erp(file_path_erp):
         for event in evoked_list:
             comment = event.comment
             data = event.data
-            norm_data = normalize(data, axis=1)
+            norm_data = normalize(data, axis=1)  # better normalize here for a prettier plot
             if comment not in data_dict.keys():
                 data_dict[comment] = norm_data
             else:
                 data_dict[comment] = data_dict[comment] + norm_data
         count += 1
 
-    for event in data_dict.keys():
+    for comment in data_dict.keys():
         data_dict[comment] = data_dict[comment]/count
 
     # FAKE ONE
